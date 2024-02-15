@@ -1,75 +1,34 @@
-#安装DESeq2
 #source("http://bioconductor.org/biocLite.R")
 #biocLite("DESeq2")
 
-#加载DESeq2
-#输入文件：count值；分组文件
 rm(list=ls())
 library(DESeq2)
 library(tidyverse)
 
-# 读取文件，去除行重复
-countMatrix=read.delim('D:/lizerui_data/研究生/01_项目工作/03_RNA-seq(李泽突变体)/data/gene_count_id.csv',header=T,sep=",",check.names=F) # 第一行为表头，第一列是行的名称
+# read files
+countMatrix=read.delim('gene_count_id.csv',header=T,sep=",",check.names=F)
 count_Matrix <- countMatrix[!duplicated(countMatrix$gene_id),]
 row.names(count_Matrix) <- count_Matrix$gene_id
 count_Matrix <- count_Matrix[-1]
 
-group <- read.delim('D:/lizerui_data/研究生/01_项目工作/03_RNA-seq(李泽突变体)/data/group.txt',header=T,sep="\t")
-# 改为DEseq的格式，colData=greoup就是分组
+group <- read.delim('group.txt',header=T,sep="\t")
 group$Group <- as.factor(group$Group)
 dds <- DESeqDataSetFromMatrix(count_Matrix, colData=group, ~ Group)
 
-#DESeqDataSetFromHTSeqCount
+# DESeqDataSetFromHTSeqCount
+dds <- dds[rowSums(counts(dds)) > 1, ] 
+dds <- DESeq(dds)
 
-dds <- dds[rowSums(counts(dds)) > 1, ] # 过滤所有样品为0的去掉，按行进行加和
-
-dds <- DESeq(dds) # deseq分析，得到差异结果 
-
-
-
-# #注意，需将 treat 在前，control 在后，意为 treat 相较于 control 中哪些基因上调/下调
+# output data for files
 res1 <- results(dds,contrast=c('Group','tr1','ck1'))
-res2 <- results(dds,contrast=c('Group','tr2','ck2'))
-res3 <- results(dds,contrast=c('Group','tr3','ck3')) # 提取分析结果
-res4 <- results(dds,contrast=c("Group",'ck2','ck1'))
-res5 <- results(dds,contrast=c("Group",'tr2','tr1'))
-
 write.table(res1,"DESeq2_res_0.txt", sep = "\t", row.names = TRUE,quote=F)
-write.table(res2,"DESeq2_res_24.txt", sep = "\t", row.names = TRUE,quote=F)
-write.table(res3,"DESeq2_res_5.txt", sep = "\t", row.names = TRUE,quote=F)
-write.table(res4,"DESeq2_res_24vs0.txt", sep = "\t", row.names = TRUE,quote=F)
-write.table(res5,"DESeq2_res_hsf20-24vs0.txt", sep = "\t", row.names = TRUE,quote=F)
-
 FCcut=2 # FC > 2
 FDRcut=0.05 # FDR < 0.05
-diff1=res1[(!is.na(res1$padj) & res1$padj<FDRcut) & abs(res1$log2FoldChange)>1,]
-diff2=res2[(!is.na(res2$padj) & res2$padj<FDRcut) & abs(res2$log2FoldChange)>1,]
-diff3=res3[(!is.na(res3$padj) & res3$padj<FDRcut) & abs(res3$log2FoldChange)>1,]
-diff4=res4[(!is.na(res4$padj) & res4$padj<FDRcut) & abs(res4$log2FoldChange)>1,]
 
-
+diff1=res1[(!is.na(res1$padj) & res1$padj<FDRcut) & abs(res1$log2FoldChange)>FCcut,]
 write.table(diff1,"DESeq2_DEG_0.txt", sep = "\t", row.names = TRUE,quote=F)
-write.table(diff2,"DESeq2_DEG_24.txt", sep = "\t", row.names = TRUE,quote=F)
-write.table(diff3,"DESeq2_DEG_5.txt", sep = "\t", row.names = TRUE,quote=F)
-write.table(diff4,"DESeq2_DEG_24vs0.txt", sep = "\t", row.names = TRUE,quote=F)
-
 diff1_down <- rownames(diff1[diff1$log2FoldChange < -1,])
 diff1_up <- rownames(diff1[diff1$log2FoldChange > 1,])
 write.table(diff1_down,"DESeq2_DEG_0_down.list", sep = "\t", row.names = F,quote=F)
 write.table(diff1_up,"DESeq2_DEG_0.up.list", sep = "\t", row.names = F,quote=F)
 
-
-diff2_down <- rownames(diff2[diff2$log2FoldChange < -1,])
-diff2_up <- rownames(diff2[diff2$log2FoldChange > 1,])
-write.table(diff2_down,"DESeq2_DEG_24_down.list", sep = "\t", row.names = F,quote=F)
-write.table(diff2_up,"DESeq2_DEG_24.up.list", sep = "\t", row.names = F,quote=F)
-
-diff3_down <- rownames(diff3[diff3$log2FoldChange < -1,])
-diff3_up <- rownames(diff3[diff3$log2FoldChange > 1,])
-write.table(diff3_down,"DESeq2_DEG_5_down.list", sep = "\t", row.names = F,quote=F)
-write.table(diff3_up,"DESeq2_DEG_5.up.list", sep = "\t", row.names = F,quote=F)
-
-diff4_down <- rownames(diff4[diff4$log2FoldChange < -1,])
-diff4_up <- rownames(diff4[diff4$log2FoldChange > 1,])
-write.table(diff4_down,"DESeq2_DEG_24vs0_down.list", sep = "\t", row.names = F,quote=F)
-write.table(diff4_up,"DESeq2_DEG_24vs0.up.list", sep = "\t", row.names = F,quote=F)
