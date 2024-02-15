@@ -2,11 +2,11 @@
 ## SNK for upstream transcriptome analysis
 
 ```
-# Upstream transcriptome analysis using snakemake
+# Upstream transcriptome analysis using snakemake. Output: 06_transcripts_quant
 snakemake -j 00_Snakemake_rna-seq.smk
 
 # 00_extract_exp.py was used to extract FPKM values for all genes of different samples
-python3 00_extract_exp.py <input>
+python3 00_extract_exp.py <input_path> <output_name>
 ``` 
 ## DESeq2 for analyzing differential genes
 ## Weighted co-expression network analysis (WGCNA)
