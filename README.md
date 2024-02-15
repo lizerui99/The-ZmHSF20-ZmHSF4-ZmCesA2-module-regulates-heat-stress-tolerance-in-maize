@@ -16,7 +16,9 @@ python3 00_rm_MGSRT.py <input_paht> <output_path>
 ```
 
 ## DESeq2 for analyzing differential genes
+Scripts in deseq2 folder
 ## Weighted co-expression network analysis (WGCNA)
+Scripts in WGCNA.r
 ## GO and TF family enrichment analysis
 ### GO enrichment analysis
 B73_AGPv4_GSMER.annot and go_class.txt in GO_enrichment
