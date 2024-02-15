@@ -19,7 +19,7 @@ python3 00_rm_MGSRT.py <input_paht> <output_path>
 ## Weighted co-expression network analysis (WGCNA)
 ## GO and TF family enrichment analysis
 ### GO enrichment analysis
-B73_AGPv4_GSMER.annot and go_class.txt in enrichment
+B73_AGPv4_GSMER.annot and go_class.txt in GO_enrichment
 ```
 rm(list=ls())
 library(clusterProfiler)
@@ -52,7 +52,7 @@ dev.off()
 ```
 
 ### Transcription factor family enrichment analysis
-TF-class.txt and TF-anno.txt in enrichment
+TF-class.txt and TF-anno.txt in GO_enrichment
 ```
 library(clusterProfiler)
 library(GOplot)
