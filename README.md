@@ -42,7 +42,7 @@ TERM2NAME = go_anno[c('ID', 'Description')],
 pvalueCutoff = 0.05,
 pAdjustMethod = 'BH',qvalueCutoff = 0.05, maxGSSize = 500)
 
-write.table(go_rich, 'c1.tab', sep = '\t', row.names = FALSE, quote = FALSE)
+write.table(go_rich, 'output.tab', sep = '\t', row.names = FALSE, quote = FALSE)
 
 # output image file
 pdf("output.pdf",h=5,w=8)
