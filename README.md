@@ -17,8 +17,9 @@ python3 00_rm_MGSRT.py <input_paht> <output_path>
 
 ## DESeq2 for analyzing differential genes
 ## Weighted co-expression network analysis (WGCNA)
-## GO enrichment analysis
-B73_AGPv4_GSMER.annot and go_class.txt in GO_enrichment
+## GO and TF family enrichment analysis
+### GO enrichment analysis
+B73_AGPv4_GSMER.annot and go_class.txt in enrichment
 ```
 rm(list=ls())
 library(clusterProfiler)
@@ -47,5 +48,35 @@ write.table(go_rich, 'output.tab', sep = '\t', row.names = FALSE, quote = FALSE)
 # output image file
 pdf("output.pdf",h=5,w=8)
 dotplot(go_rich,showCategory=15,decreasing=T,label_format =50,color = "pvalue")
+dev.off()
+```
+
+### Transcription factor family enrichment analysis
+TF-class.txt and TF-anno.txt in enrichment
+```
+library(clusterProfiler)
+library(GOplot)
+
+
+term2gene <- read.delim('TF-class.txt',header = FALSE, sep = '\t')
+term2name <- read.delim('TF-anno.txt',header = FALSE,sep = '\t')
+
+
+gene <- read.delim('CytoscapeInput-nodes-brown.txt',header = 1,sep = '\t')
+
+x <- enricher(gene$nodeName,
+              TERM2GENE = term2gene,
+              TERM2NAME = term2name,
+              pvalueCutoff = 0.05,
+              pAdjustMethod = 'BH',
+              qvalueCutoff = 0.05, 
+              maxGSSize = 500)
+
+dotplot(x,showCategory=100,decreasing=T,label_format =50)
+
+
+write.table(x, 'rich_tf.tab', sep = '\t', row.names = FALSE, quote = FALSE)
+pdf("rich_TF.pdf",h=5,w=8)
+dotplot(x,showCategory=15,decreasing=T,label_format =50)
 dev.off()
 ```
