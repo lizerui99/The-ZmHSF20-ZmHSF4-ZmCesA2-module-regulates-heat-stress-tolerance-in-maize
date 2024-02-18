@@ -1,12 +1,3 @@
-"""
-1.合并不同lane
-2.质控
-3.比对
-4.过滤q20
-5.组装转录本、转录本定量
-6.获取表，获取exp矩阵
-7.修改id
-"""
 import os
 path = './sample'
 dirs = os.listdir(path)
